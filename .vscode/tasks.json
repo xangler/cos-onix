@@ -20,7 +20,7 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "编译器: /usr/bin/gcc"
+            "detail": "compiler: /usr/bin/gcc"
         }
     ],
     "version": "2.0.0"

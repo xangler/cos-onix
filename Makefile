@@ -15,10 +15,6 @@ CFLAGS:=$(strip ${CFLAGS})
 DEBUG:= -g
 INCLUDE:=-I$(SRC)/include
 
-base:
-	mkdir -p $(BUILD)
-	yes | qemu-img create $(BUILD)/base.img 16M
-
 $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 	$(shell mkdir -p $(dir $@))
 	nasm -f bin $< -o $@
@@ -52,7 +48,23 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 	dd if=$(BUILD)/boot/loader.bin of=$@ bs=512 count=4 seek=2 conv=notrunc
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc
 
-dev:
+base:
+	mkdir -p $(BUILD)
+	yes | qemu-img create $(BUILD)/base.img 16M
+
+image: $(BUILD)/master.img
+	$(call docker_env, make $(BUILD)/master.img)
+
+run: 
+	qemu-system-i386 \
+	-m 32M \
+	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
+
+# bochs -> 4 -> bochsrc -> 7 -> vi disk
+bochs: 
+	bochs -q -f bochsrc
+
+dev-start:
 	docker run -d --rm \
 	--network=host \
 	--name=demo-os \
@@ -60,10 +72,12 @@ dev:
 	-w /work \
 	os-dev:v1.0.0 bash -c "sleep infinity"
 
-image: $(BUILD)/master.img
-
-run: 
+dev-stop:
+	docker stop demo-os
+	
+rung: 
 	qemu-system-i386 \
+	-s -S \
 	-m 32M \
 	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
 
