@@ -6,6 +6,6 @@ char buf[1024]; // .bss
 
 int main()
 {
-    printf(message);
+    printf("%s", message);
     return 0;
 }

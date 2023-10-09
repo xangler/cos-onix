@@ -21,7 +21,7 @@ $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 
 $(BUILD)/kernel/%.o: $(SRC)/kernel/%.asm
 	$(shell mkdir -p $(dir $@))
-	nasm -f elf32 $(DEBUG) $< -o $@
+	nasm -F dwarf -f elf32 $(DEBUG) $< -o $@
 
 $(BUILD)/kernel/%.o: $(SRC)/kernel/%.c
 	$(shell mkdir -p $(dir $@))
@@ -43,16 +43,15 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 	$(BUILD)/system.bin \
 	$(BUILD)/system.map \
 
-	cp $(BUILD)/base.img $@
+	cp resource/base.img $@
 	dd if=$(BUILD)/boot/boot.bin of=$@ bs=512 count=1 conv=notrunc
 	dd if=$(BUILD)/boot/loader.bin of=$@ bs=512 count=4 seek=2 conv=notrunc
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc
 
 base:
-	mkdir -p $(BUILD)
-	yes | qemu-img create $(BUILD)/base.img 16M
+	yes | qemu-img create resource/base.img 16M
 
-image: $(BUILD)/master.img
+image: 
 	$(call docker_env, make $(BUILD)/master.img)
 
 run: 
@@ -60,9 +59,9 @@ run:
 	-m 32M \
 	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
 
-# bochs -> 4 -> bochsrc -> 7 -> vi disk
+# bochs -> 4 -> resource/bochsrc -> 7 -> vi disk
 bochs: 
-	bochs -q -f bochsrc
+	bochs -q -f resource/bochsrc
 
 dev-start:
 	docker run -d --rm \
@@ -81,6 +80,8 @@ rung:
 	-m 32M \
 	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
 
+clean:
+	rm -rf build
 ########################function############################
 ########$(call docker_env, sleep 10)#########
 define docker_env

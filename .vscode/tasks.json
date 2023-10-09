@@ -28,6 +28,8 @@
             "command": "",
             "args": [
                 "/usr/bin/nasm",
+                "-F",
+                "dwarf",
                 "-f",
                 "elf32",
                 "-g",
