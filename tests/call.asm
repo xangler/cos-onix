@@ -2,23 +2,23 @@
 
 extern exit
 
-; test:
-;     push $
-;     ret
+test:
+    push $
+    ret
 
 global main
 main:
-    push 5
-    push eax
+    ; push 5
+    ; push eax
 
-    pop ebx
-    pop ecx
+    ; pop ebx
+    ; pop ecx
 
-    ; pusha
+    pusha
 
-    ; popa
+    popa
 
-    ; call test
+    call test
 
     push 0; 传递参数
     call exit
