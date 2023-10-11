@@ -6,14 +6,13 @@
 #include <onix/printk.h>
 #include <onix/assert.h>
 #include <onix/debug.h>
+#include <onix/global.h>
+#include <onix/task.h>
 
 void kernel_init()
 {
     console_init();
-
-    BMB;
-
-    DEBUGK("debug onix!!!\n");
-
+    gdt_init();
+    task_init();
     return;
 }
