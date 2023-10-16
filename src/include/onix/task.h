@@ -12,9 +12,6 @@ typedef struct task_t
 
 typedef struct task_frame_t
 {
-    // u32 edi;
-    // u32 esi;
-    // u32 ebx;
     u32 ebp;
     void (*eip)(void);
 } task_frame_t;
