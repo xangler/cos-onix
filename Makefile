@@ -40,6 +40,9 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/handler.o \
+	$(BUILD)/kernel/clock.o \
+	$(BUILD)/kernel/time.o \
+	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	$(BUILD)/lib/stdlib.o \
@@ -69,10 +72,16 @@ base:
 image: 
 	$(call docker_env, make $(BUILD)/master.img)
 
-run: 
-	qemu-system-i386 \
+QEMU:= qemu-system-i386 \
 	-m 32M \
-	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
+	-boot c \
+	-drive file=$(BUILD)/master.img,if=ide,index=0,media=disk,format=raw \
+	-audiodev coreaudio,id=coreaudio \
+	-machine pcspk-audiodev=coreaudio \
+	-rtc base=localtime \
+
+run: 
+	$(QEMU)
 
 # bochs -> 4 -> resource/bochsrc -> 7 -> vi disk
 bochs: 
@@ -90,10 +99,7 @@ dev-stop:
 	docker stop demo-os
 	
 rung: 
-	qemu-system-i386 \
-	-s -S \
-	-m 32M \
-	-drive file=$(BUILD)/master.img,format=raw,index=0,media=disk
+	$(QEMU) -s -S
 
 clean:
 	rm -rf build
