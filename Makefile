@@ -43,6 +43,8 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/time.o \
 	$(BUILD)/kernel/rtc.o \
+	$(BUILD)/kernel/memory.o \
+	$(BUILD)/lib/bitmap.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	$(BUILD)/lib/stdlib.o \
@@ -64,6 +66,7 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 	cp resource/base.img $@
 	dd if=$(BUILD)/boot/boot.bin of=$@ bs=512 count=1 conv=notrunc
 	dd if=$(BUILD)/boot/loader.bin of=$@ bs=512 count=4 seek=2 conv=notrunc
+	test -n "$$(find $(BUILD)/system.bin -size -100k)"
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc
 
 base:
@@ -85,7 +88,7 @@ run:
 
 # bochs -> 4 -> resource/bochsrc -> 7 -> vi disk
 bochs: 
-	bochs -q -f resource/bochsrc
+	bochs -q -f resource/bochsrc -unlock
 
 dev-start:
 	docker run -d --rm \
