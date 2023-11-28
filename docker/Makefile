@@ -1,8 +1,11 @@
 include base-info
 export ImageName=${DemoName}-image.${Version}
 
-image:
-	cd ${Version} && ./prepare.sh && docker build --network=host -t ${DemoName}:${Version} . && cd -
+image-arch:
+	cd ${Version} && ./prepare.sh && docker build --network=host -t ${DemoName}:${Version} -f Dockerfile.arch . && cd -
+
+image-ubuntu:
+	cd ${Version} && ./prepare.sh && docker build --network=host -t ${DemoName}:${Version} -f Dockerfile.ubuntu . && cd -
 
 run:
 	docker run -it --rm --entrypoint='bash' \

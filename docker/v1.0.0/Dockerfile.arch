@@ -1,0 +1,12 @@
+FROM archlinux:base-devel
+
+# 更新系统
+RUN pacman -Syu --noconfirm
+
+# 基础工具
+RUN pacman -S --noconfirm git zip 
+RUN git config --global url."https://".insteadOf git://; git config --global http.sslVerify false; git config --global http.postBuffer 1048576000
+RUN pacman -S --noconfirm nasm gdb
+
+# grub工具包
+RUN pacman -S --noconfirm mtools xorriso grub

@@ -19,15 +19,22 @@ void idle_thread()
     }
 }
 
+#include <onix/mutex.h>
+
+lock_t lock;
+
 void init_thread()
 {
+    lock_init(&lock);
     set_interrupt_state(true);
     u32 counter = 0;
 
     while (true)
     {
+        lock_acquire(&lock);
         LOGK("init task %d....\n", counter++);
-        sleep(500);
+        lock_release(&lock);
+        // sleep(500);
     }
 }
 
@@ -38,7 +45,9 @@ void test_thread()
 
     while (true)
     {
+        lock_acquire(&lock);
         LOGK("test task %d....\n", counter++);
-        sleep(709);
+        lock_release(&lock);
+        // sleep(709);
     }
 }

@@ -1,0 +1,16 @@
+FROM ubuntu:22.04
+
+# 更新系统
+RUN apt-get update
+
+# 基础工具
+# time zones in which they are located
+ENV DEBIAN_FRONTEND=noninteractive 
+RUN apt-get install -y tzdata
+RUN apt-get install -y curl make git zip 
+RUN git config --global url."https://".insteadOf git://; git config --global http.sslVerify false; git config --global http.postBuffer 1048576000
+RUN apt-get install -y nasm build-essential gdb
+
+# grub工具包(有问题,无法启动)
+RUN apt-get install -y mtools xorriso grub-common
+
