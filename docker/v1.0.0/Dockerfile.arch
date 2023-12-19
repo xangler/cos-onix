@@ -1,12 +1,18 @@
 FROM archlinux:base-devel
 
 # 更新系统
+RUN pacman-key --init
+RUN echo "[multilib]" >> /etc/pacman.conf
+RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm
 
 # 基础工具
 RUN pacman -S --noconfirm git zip 
 RUN git config --global url."https://".insteadOf git://; git config --global http.sslVerify false; git config --global http.postBuffer 1048576000
 RUN pacman -S --noconfirm nasm gdb
+
+# 32位程序debug
+RUN pacman -S --noconfirm multilib-devel
 
 # grub工具包
 RUN pacman -S --noconfirm mtools xorriso grub

@@ -1,1 +1,8 @@
+*.o
+*.a
+*.so
+*.bin
+*.out
+*.img
+*.map
 build
